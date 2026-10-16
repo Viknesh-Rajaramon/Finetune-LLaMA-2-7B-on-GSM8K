@@ -172,9 +172,13 @@ Hyperparameters and paths are set in the `ModelConfig` class (`fine-tuning.py`) 
 ## Team Contributions
 
 **Viknesh Rajaramon**: SFT training configuration (`SFTConfig`), `SFTTrainer` setup, and the `main()` pipeline that connects the training workflow
+
 **Vignesh Gopalakrishnan**: Training hyperparameters and the validation process
+
 **Kalhan Ganjoo**: Library setup and the PEFT/LoRA configuration
+
 **Lalit Arvind Balaji**: 4-bit quantization and model/tokenizer loading
+
 **Akash Sivakumar**: Dataset loading, preprocessing and prompt template, and W&B integration
 
 ## References

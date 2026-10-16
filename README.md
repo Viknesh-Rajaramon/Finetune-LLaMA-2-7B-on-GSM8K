@@ -165,7 +165,7 @@ Hyperparameters and paths are set in the `ModelConfig` class (`fine-tuning.py`) 
 ├── evaluation.py    # Exact-match accuracy on the GSM8K test split
 ├── .env.example     # Template for HF_TOKEN and WANDB_API_KEY
 ├── .gitignore       # Keeps .env, model outputs and logs out of git
-└── README.md
+├── README.md
 └── LICENSE
 ```
 

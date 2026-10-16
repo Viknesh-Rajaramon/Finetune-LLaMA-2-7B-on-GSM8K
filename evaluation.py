@@ -1,3 +1,9 @@
+import os
+from dotenv import load_dotenv
+
+# Load HF_TOKEN and WANDB_API_KEY from the .env file
+load_dotenv()
+
 from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
 from datasets import load_dataset
 from peft import PeftModel, PeftConfig
@@ -8,8 +14,8 @@ import torch
 
 class TestConfig():
 	def __init__(self):
-		self.model_dir = "" # Model directory
-		self.hf_token = "" # Hugging Face Token
+		self.model_dir = "./test_model" # Model directory
+		self.hf_token = os.environ.get("HF_TOKEN") # Hugging Face Token
 		self.dataset_name = "openai/gsm8k" # Dataset Name
 		self.prompt = "Question:\n {question} \n\n Let's think step by step. At the end, you MUST write the answer as an integer after '####'.\n\n Answer:\n " # Prompt
 
@@ -120,6 +126,10 @@ def test():
 
 	# Get model config
 	test_config = get_test_config()
+
+	# Llama 2 is a gated model, so a Hugging Face token is required
+	if not test_config.hf_token:
+		raise EnvironmentError("HF_TOKEN is not set. Export your Hugging Face access token first.")
 
 	# Load dataset
 	dataset = get_dataset(test_config.dataset_name, test_config.hf_token)

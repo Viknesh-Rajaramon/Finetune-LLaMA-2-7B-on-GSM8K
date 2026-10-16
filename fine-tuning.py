@@ -1,4 +1,8 @@
 import os
+from dotenv import load_dotenv
+
+# Load HF_TOKEN and WANDB_API_KEY from the .env file
+load_dotenv()
 
 # Set Environment Variables
 os.environ["TOKENIZERS_PARALLELISM"] = "false"
@@ -17,11 +21,11 @@ from datetime import datetime
 class ModelConfig():
 	def __init__(self):
 		self.model_name = "meta-llama/Llama-2-7b-hf" # Model name
-		self.wandb_api_key = ""  # Weights & Biases API Key
-		self.hf_token = "" # Hugging Face Token
+		self.wandb_api_key = os.environ.get("WANDB_API_KEY")  # Weights & Biases API Key
+		self.hf_token = os.environ.get("HF_TOKEN") # Hugging Face Token
 		self.dataset_name = "openai/gsm8k" # Dataset Name
 		self.test_split = 0.1  # Split 10% for validation
-		self.output_dir = "" # Directory to store the results/output
+		self.output_dir = "./results" # Directory to store the results/output
 		self.num_epochs = 5 # Number of epochs
 		self.train_batch_size = 20 # Training batch size
 		self.val_batch_size = 20 # Validation batch size
@@ -37,8 +41,8 @@ class ModelConfig():
 		self.warmup_steps = 10 # Warm up steps
 		self.report_to = "wandb"
 		self.max_seq_length = 512 # Maximum sequence length
-		self.save_model_dir = "" # Directory to save the model being fine-tuned
-		self.wandb_user = "" # Username for Weight & Biases
+		self.save_model_dir = "./test_model" # Directory to save the model being fine-tuned
+		self.wandb_user = os.environ.get("WANDB_USER") # Username for Weight & Biases
 
 
 def wandb_login(api_key, user):
@@ -78,8 +82,6 @@ def load_model_and_tokenizer(model_name, hf_token):
 
 
 def get_preprocessed_dataset(train_dataset, test_split):
-	train_dataset = train_dataset
-
 	def chat_template(example):
 		example["question"] = "Question:\n {question} \n\n Let's think step by step. At the end, you MUST write the answer as an integer after '####'.\n\n Answer:\n {answer}".format(question = example["question"], answer = example["answer"])
 		return example
@@ -161,6 +163,10 @@ def get_sft_trainer(model, train_dataset, val_dataset, peft_config, tokenizer, s
 def main():
 	# Get model config
 	model_config = get_model_config()
+
+	# Llama 2 is a gated model, so a Hugging Face token is required
+	if not model_config.hf_token:
+		raise EnvironmentError("HF_TOKEN is not set. Export your Hugging Face access token first.")
 
 	# Check if CUDA is available
 	print(f"\nCUDA available: {torch.cuda.is_available()}")
